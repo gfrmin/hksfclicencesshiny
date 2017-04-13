@@ -13,7 +13,7 @@ library(tidyr)
 library(dplyr)
 library(DT)
 
-hksfclicences <- tbl(src_postgres("hkdata"), "hksfclicences") %>% collect
+hksfclicences <- tbl(src_postgres("hkdata"), "hksfclicences", n = Inf) %>% collect %>% unique
 hksfclicences$licence <- "✔" 
 hksfclicences <- hksfclicences %>% spread(acttype, licence, fill = "")
 
