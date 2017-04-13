@@ -19,7 +19,7 @@ hksfclicences$licence <- "✔"
 
 licencetypes <- sort(unique(hksfclicences$acttype)) # get licence types dynamically
 
-hksfclicences <- hksfclicences %>% spread(acttype, licence, fill = "") %>% filter(!str_detect(name, "^[,\\d]")) %>% filter(!str_detect(name, "[!?]"))
+hksfclicences <- hksfclicences %>% spread(acttype, licence, fill = "") %>% filter(str_detect(name, "^[A-Z]")) %>% filter(!str_detect(name, "[!?]"))
 
 
 
