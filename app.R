@@ -47,7 +47,7 @@ server <- function(input, output, session) {
               '` ==  "✔"')
        )
      }
-     hksfclicences
+     datatable(hksfclicences, colnames = c("Institution", "Role", "Name", "Start date", "End date", licencetypes))
    })
 }
 
