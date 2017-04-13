@@ -12,13 +12,14 @@ library(jsonlite)
 library(tidyr)
 library(dplyr)
 library(DT)
+library(stringr)
 
-hksfclicences <- tbl(src_postgres("hkdata"), "hksfclicences", n = Inf) %>% collect %>% unique
+hksfclicences <- tbl(src_postgres("hkdata"), "hksfclicences") %>% collect(n = Inf) %>% unique
 hksfclicences$licence <- "✔" 
 
 licencetypes <- sort(unique(hksfclicences$acttype)) # get licence types dynamically
 
-hksfclicences <- hksfclicences %>% spread(acttype, licence, fill = "")
+hksfclicences <- hksfclicences %>% spread(acttype, licence, fill = "") %>% filter(!str_detect(name, "^,"))
 
 
 
