@@ -48,7 +48,7 @@ server <- function(input, output, session) {
               '` ==  "✔"')
        )
      }
-     datatable(hksfclicences, options = list(order = list(list(3, 'asc'))), colnames = c("Institution", "Role", "Name", "Start date", "End date", licencetypes))
+     datatable(hksfclicences, rownames = FALSE, options = list(order = list(list(2, 'asc'))), colnames = c("Institution", "Role", "Name", "Start date", "End date", licencetypes))
    })
 }
 
