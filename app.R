@@ -8,31 +8,26 @@
 #
 
 library(shiny)
-library(jsonlite)
 library(tidyr)
 library(dplyr)
 library(DT)
 library(stringr)
+library(readr)
 
-hksfclicences <- tbl(src_postgres("hkdata"), "hksfclicences") %>% collect(n = Inf) %>% unique
-hksfclicences$licence <- "✔" 
-
-licencetypes <- sort(unique(hksfclicences$acttype)) # get licence types dynamically
-
-hksfclicences <- hksfclicences %>% spread(acttype, licence, fill = "") %>% filter(str_detect(name, "^[A-Z]")) %>% filter(!str_detect(name, "[!?]"))
-
-
+sfclicences <- read_csv("hksfclicences.csv")
 
 ui <- fluidPage(
-   
-   # Application title
    titlePanel("HK SFC licences"),
    sidebarLayout(
      sidebarPanel(
        checkboxGroupInput("licencetypes", "Licences held:",
-                          licencetypes
-                          )
-       ), 
+                          1:10
+                          ),
+       radioButtons("officertypes", "Officers:",
+                          c(unique(sfclicences$lcRole), "All")
+       ),
+       checkboxInput("activeonly", "Active only?", FALSE)
+       ),
      mainPanel(
        dataTableOutput("hksfclicences")
     )
@@ -40,16 +35,18 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-   output$hksfclicences <- renderDataTable({
-     if (!is.null(input$licencetypes)) {
-     hksfclicences <- hksfclicences %>% filter_(
-       paste0("`",
-              paste(input$licencetypes, collapse = '` ==  "✔" & `'),
-              '` ==  "✔"')
-       )
-     }
-     datatable(hksfclicences, rownames = FALSE, options = list(order = list(list(2, 'asc'))), colnames = c("Institution", "Role", "Name", "Start date", "End date", licencetypes))
-   })
+  output$hksfclicences <- renderDataTable({
+    if (input$activeonly == TRUE) {
+      sfclicences <- sfclicences %>% filter(is.na(endDate))
+    }
+    if (!is.null(input$licencetypes)) {
+      sfclicences <- sfclicences %>% filter_(paste0("`", paste(input$licencetypes, collapse = '` ==  "✔" & `'),'` ==  "✔"'))
+    }
+    if (input$officertypes != "All") {
+      sfclicences <- sfclicences %>% filter(lcRole == input$officertypes)
+    }
+    datatable(sfclicences, rownames = FALSE)
+  })
 }
 
 # Run the application 
