@@ -45,7 +45,7 @@ server <- function(input, output, session) {
     if (input$officertypes != "All") {
       sfclicences <- sfclicences %>% filter(lcRole == input$officertypes)
     }
-    datatable(sfclicences, rownames = FALSE)
+    datatable(sfclicences, rownames = FALSE, colnames = c("CEREF", "Name", "Institution", "Start Date", "End Date", "Role", 1:10))
   })
 }
 
